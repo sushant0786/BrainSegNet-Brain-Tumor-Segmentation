@@ -1,0 +1,38 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VS Code settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Data, model, and output files
+*.h5
+*.npz
+*.npy
+*.csv
+*.pth
+*.pt
+*.ckpt
+runs/
+outputs/
+logs/
+checkpoints/
+models/
+
+# OS files
+.DS_Store
+
+# data file very large
+.archive/
