@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 
 from unet_parts import DoubleConv,DownSample,UpSample
-
 class UNet(nn.Module):
   def __init__(self,in_channels,num_classes):
     super().__init__()
@@ -21,15 +20,15 @@ class UNet(nn.Module):
     self.out = nn.Conv2d(in_channels=64, out_channels=num_classes, kernel_size=1)
     
 
-  def forward(self, x):
-       down_1, p1 = self.down_convolution_1(x)
-       down_2, p2 = self.down_convolution_2(p1)
-       down_3, p3 = self.down_convolution_3(p2)
-       down_4, p4 = self.down_convolution_4(p3)
+  def forward(self, x):                          
+       down_1, p1 = self.down_convolution_1(x)   
+       down_2, p2 = self.down_convolution_2(p1)  
+       down_3, p3 = self.down_convolution_3(p2)  
+       down_4, p4 = self.down_convolution_4(p3)  
 
-       b = self.bottleneck(p4)
+       b = self.bottleneck(p4)                   
 
-       up_1 = self.up_convolution_1(b, down_4)
+       up_1 = self.up_convolution_1(b, down_4)   
        up_2 = self.up_convolution_2(up_1, down_3)
        up_3 = self.up_convolution_3(up_2, down_2)
        up_4 = self.up_convolution_4(up_3, down_1)
@@ -38,11 +37,3 @@ class UNet(nn.Module):
        return out
   
 
-# if __name__=="__main__":
-#    double_cov=DoubleConv(256,256)
-#    print(double_cov)
-
-#    input_tensor=torch.randn((1,3,512,512))
-#    model=UNet(3,10)
-#    output=model(input_tensor)
-#    print(output.shape)  # (1, 10, 512, 512) 

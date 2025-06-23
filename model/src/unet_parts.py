@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-
 class DoubleConv(nn.Module):
   def __init__(self,in_channels,out_channels):
     super().__init__()
@@ -36,4 +35,3 @@ class UpSample(nn.Module):
     x=torch.cat([x1,x2],1)
     return self.conv(x)
   
-
