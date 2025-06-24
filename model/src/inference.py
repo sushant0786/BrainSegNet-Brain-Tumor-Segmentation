@@ -1,47 +1,82 @@
-import torch
-from unet_parts import DoubleConv,DownSample,UpSample
+from pathlib import Path
+import torch,os
 from unet import UNet
-best_model_PATH = "../models/unet_best.pth"  
-from MRIDataset import MRIDataset
-from loss_fun_helper import dice_coef, criterion
-from make_split import test_dl
+import cv2,base64
+import numpy as np 
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+from typing import List, Tuple, Union, Optional
+import sys, os                               
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
+MODEL_PATH  = os.path.join(BASE_DIR, "models","unet_best.pth")
 
+DEVICE=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model=UNet(in_channels=3,num_classes=1).to(DEVICE)
 
-model= UNet(in_channels=3, num_classes=1)  
-DEVICE        = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-## loading model
-best_model=torch.load(best_model_PATH,map_location=DEVICE)
-model.load_state_dict(best_model)
-
-
-print("Unet model inference")
-
+## load Unet 
+bestmodel=torch.load(MODEL_PATH,map_location=DEVICE)
+model.load_state_dict(bestmodel)
 model.eval()
 
-test_loss, test_dice, num_samples = 0.0, 0.0, 0
+IMG_SIZE=256
+PROB_THRESH=0.3
 
-with torch.no_grad():
-    for step, (imgs, msks) in enumerate(test_dl, 1):
-        imgs, msks = imgs.to(DEVICE), msks.to(DEVICE)
+# Albumentations pipeline
+val_tf = A.Compose([
+    A.Resize(IMG_SIZE, IMG_SIZE),
+    A.Normalize(), ToTensorV2()
+])
 
-        logits = model(imgs)
-        probs  = torch.sigmoid(logits)
 
-        loss = criterion(logits, msks)
-        dice = dice_coef(probs, msks)
+def _preprocess(bgr: np.ndarray) -> torch.Tensor:
+    rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+    out = val_tf(image=rgb)
+    ten = out["image"].unsqueeze(0).to(DEVICE)          # 1×3×H×W
+    return ten
 
-        bs = imgs.size(0)           # current batch size
-        test_loss += loss.item()  * bs
-        test_dice += dice.item()  * bs
-        num_samples += bs
+def _postprocess(prob: np.ndarray,) -> np.ndarray:
+    mask = (prob > PROB_THRESH).astype(np.uint8)          # 0/1
+    return mask * 255
 
-        print(f"Step {step:03d}/{len(test_dl)} | "
-              f"Loss {loss.item():.4f} | Dice {dice.item():.4f}")
 
-test_loss /= num_samples
-test_dice /= num_samples
-print(f"\nTest Loss: {test_loss:.4f} | Test Dice: {test_dice:.4f}")
+def segment_one(img: Union[str, np.ndarray]) -> np.ndarray:
+    if isinstance(img, (str, Path)):
+        bgr = cv2.imread(str(img))
+        if bgr is None:
+            raise ValueError(f"Could not read image: {img}")
+    else:
+        bgr = img
+    x = _preprocess(bgr)
+    with torch.no_grad():
+        prob = torch.sigmoid(model(x))[0,0].cpu().numpy()    ## 1,1,256,256
+    return _postprocess(prob)
 
-    
-        
+# def segment_batch(paths: List[str], save_dir: Optional[str]=None)->List[Tuple[str,np.ndarray,np.ndarray]]:
+#     outs = []
+#     if save_dir:
+#         os.makedirs(save_dir, exist_ok=True)
+#     for p in paths:
+#         mask, ov = segment_one(p)
+#         outs.append((p, mask, ov))
+#         if save_dir:
+#             name = Path(p).stem
+#             cv2.imwrite(os.path.join(save_dir, f"{name}_mask.png"), mask)
+#             cv2.imwrite(os.path.join(save_dir, f"{name}_overlay.png"),
+#                         cv2.cvtColor(ov, cv2.COLOR_RGB2BGR))
+#     return outs
+
+# inference.py  ─ change ONLY this helper
+def encode_png(arr: np.ndarray) -> str:
+    """Return base-64 PNG string from an RGB or gray NumPy array."""
+    # OpenCV encoders expect BGR
+    if arr.ndim == 3 and arr.shape[2] == 3:          # RGB image
+        arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+    ok, buf = cv2.imencode(".png", arr)
+    if not ok:
+        raise ValueError("PNG encoding failed")
+    return base64.b64encode(buf).decode("utf-8")
+
+
+
+
+

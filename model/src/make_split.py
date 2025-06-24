@@ -8,7 +8,7 @@ import glob
 import cv2
 import numpy as np
 
-DATA_PATH = "/kaggle/input/lgg-mri-segmentation/kaggle_3m/"
+DATA_PATH = "../../../data/archive/lgg-mri-segmentation/kaggle_3m/"
 data=[]
 data=[]
 for sub_dir_path in glob.glob(DATA_PATH+"*"):
@@ -24,9 +24,9 @@ df=pd.DataFrame({
 })
 
 #for sorting 
-BASE_LEN=89      # "/data/archive/lgg-mri-segmentation/kaggle_3m\TCGA_CS_4941_19960909/TCGA_CS_4941_19960909_"
-END_IMG_LEN=4    #".tif"
-END_MASK_LEN=9   #"_mask.tif"
+BASE_LEN=89     
+END_IMG_LEN=4    
+END_MASK_LEN=9   
 
 df_images=df[~df["path"].str.contains("mask")]
 df_masks=df[df["path"].str.contains("mask")]
