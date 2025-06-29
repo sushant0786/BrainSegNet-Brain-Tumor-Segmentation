@@ -37,3 +37,4 @@ models/
 # data file very large
 .archive/
 .data
+myenv

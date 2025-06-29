@@ -2,8 +2,10 @@
 import streamlit as st
 import requests, base64, cv2, numpy as np
 from typing import List, Dict, Tuple
+import os
 
-API_URL = "http://127.0.0.1:8000/segment"          # ← FastAPI endpoint
+API_URL = os.getenv("BACKEND_URL", st.secrets["backend_url"])
+
 
 
 def b64_to_np(b64: str) -> np.ndarray:
