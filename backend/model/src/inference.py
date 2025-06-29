@@ -5,19 +5,32 @@ import cv2,base64
 import numpy as np 
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
+from huggingface_hub import hf_hub_download
+import torch
 from typing import List, Tuple, Union, Optional
 import sys, os                               
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
-MODEL_PATH  = os.path.join(BASE_DIR, "models","unet_best.pth")
+
+
+
+#  loading model
 
 DEVICE=torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 model=UNet(in_channels=3,num_classes=1).to(DEVICE)
 
-## load Unet 
-bestmodel=torch.load(MODEL_PATH,map_location=DEVICE)
-model.load_state_dict(bestmodel)
+
+#  loading from huggingface
+
+WEIGHTS = hf_hub_download(
+    repo_id="TejasB5/unet_brain_tumor",   
+    filename="unet_best.pth",            
+    cache_dir="/data/hf-cache"            
+)
+model.load_state_dict(torch.load(WEIGHTS, map_location=DEVICE))
 model.eval()
+
+## load Unet 
+
 
 IMG_SIZE=256
 PROB_THRESH=0.3
@@ -37,7 +50,7 @@ def _preprocess(bgr: np.ndarray) -> torch.Tensor:
 
 def _postprocess(prob: np.ndarray,) -> np.ndarray:
     mask = (prob > PROB_THRESH).astype(np.uint8)          # 0/1
-    print(mask.shape)
+    # print(mask.shape)
     return mask * 255
 
 
