@@ -6,9 +6,7 @@ from typing import List, Tuple
 import cv2,base64
 import sys, os                               
 import uvicorn
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
-SRC_DIR  = os.path.join(BASE_DIR,"backend","model", "src")
-sys.path.append(SRC_DIR)
+
 from inference import segment_one,encode_png,segment_batch
 
 app=FastAPI(
