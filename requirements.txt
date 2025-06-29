@@ -1,13 +1,13 @@
 torch             
 torchvision
 albumentations
-opencv-python-headless
+opencv-python
 numpy
 pandas
 scikit-learn
 matplotlib
 pillow
-tqdm
+
 
 fastapi
 uvicorn[standard]
@@ -15,4 +15,4 @@ pydantic
 
 streamlit                 
 requests
-cv2
+python-multipart

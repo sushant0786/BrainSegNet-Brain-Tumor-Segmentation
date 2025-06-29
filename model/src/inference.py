@@ -11,6 +11,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATH  = os.path.join(BASE_DIR, "models","unet_best.pth")
 
 DEVICE=torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 model=UNet(in_channels=3,num_classes=1).to(DEVICE)
 
 ## load Unet 
@@ -36,6 +37,7 @@ def _preprocess(bgr: np.ndarray) -> torch.Tensor:
 
 def _postprocess(prob: np.ndarray,) -> np.ndarray:
     mask = (prob > PROB_THRESH).astype(np.uint8)          # 0/1
+    print(mask.shape)
     return mask * 255
 
 
@@ -51,20 +53,25 @@ def segment_one(img: Union[str, np.ndarray]) -> np.ndarray:
         prob = torch.sigmoid(model(x))[0,0].cpu().numpy()    ## 1,1,256,256
     return _postprocess(prob)
 
-# def segment_batch(paths: List[str], save_dir: Optional[str]=None)->List[Tuple[str,np.ndarray,np.ndarray]]:
-#     outs = []
-#     if save_dir:
-#         os.makedirs(save_dir, exist_ok=True)
-#     for p in paths:
-#         mask, ov = segment_one(p)
-#         outs.append((p, mask, ov))
-#         if save_dir:
-#             name = Path(p).stem
-#             cv2.imwrite(os.path.join(save_dir, f"{name}_mask.png"), mask)
-#             cv2.imwrite(os.path.join(save_dir, f"{name}_overlay.png"),
-#                         cv2.cvtColor(ov, cv2.COLOR_RGB2BGR))
-#     return outs
+def segment_batch(bgr_list: List[np.ndarray]) -> List[np.ndarray]:
 
+    if len(bgr_list) == 0:
+        return []
+
+    tens = []
+    for bgr in bgr_list:
+        rgb  = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+        out  = val_tf(image=rgb)
+        tens.append(out["image"])
+    batch = torch.stack(tens).to(DEVICE)          # N×3×H×W
+
+    with torch.no_grad():
+        probs = torch.sigmoid(model(batch)).cpu().numpy()   # N×1×H×W
+
+    masks = [_postprocess(prob[0]) for prob in probs]       # List[N×H×W]
+
+    
+    return masks
 # inference.py  ─ change ONLY this helper
 def encode_png(arr: np.ndarray) -> str:
     """Return base-64 PNG string from an RGB or gray NumPy array."""
