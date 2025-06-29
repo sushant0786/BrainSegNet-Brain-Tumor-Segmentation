@@ -19,8 +19,8 @@ app=FastAPI(
 )
 
 app.add_middleware(
-  CORSMiddleware,
-  allow_origins=["*"],           
+  CORSMiddleware,   
+  allow_origins=["https://*.streamlit.app"],        
   allow_methods=["POST"],
   allow_headers=["*"],
 )
