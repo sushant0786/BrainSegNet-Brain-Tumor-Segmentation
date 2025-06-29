@@ -10,7 +10,7 @@ import torch
 from typing import List, Tuple, Union, Optional
 import sys, os                               
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  
-
+from pathlib import Path
 
 
 #  loading model
@@ -20,22 +20,17 @@ DEVICE=torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #  loading from huggingface
 
-# model=UNet(in_channels=3,num_classes=1).to(DEVICE)
+model=UNet(in_channels=3,num_classes=1).to(DEVICE)
 
-# WEIGHTS = hf_hub_download(
-#     repo_id="TejasB5/unet_brain_tumor",   
-#     filename="unet_best.pth",            
-#     cache_dir="/data/hf-cache"            
-# )
-# model.load_state_dict(torch.load(WEIGHTS, map_location=DEVICE))
-# model.eval()
-
-WEIGHTS_PATH = Path(__file__).resolve().parent / "../weights/unet_best.pth"
-
-model = UNet(in_channels=3, num_classes=1).to(DEVICE)
-model.load_state_dict(torch.load(WEIGHTS_PATH, map_location=DEVICE))
+WEIGHTS = hf_hub_download(
+    repo_id="TejasB5/unet_brain_tumor",   
+    filename="unet_best_fp16.pth",            
+    cache_dir="/data/hf-cache"            
+)
+model.load_state_dict(torch.load(WEIGHTS, map_location=DEVICE))
 model.eval()
-torch.set_grad_enabled(False)          # no autograd → save RAM
+
+torch.set_grad_enabled(False)
 
 ## load Unet 
 
