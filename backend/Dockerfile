@@ -12,7 +12,7 @@ from huggingface_hub import hf_hub_download
 hf_hub_download(
     repo_id="TejasB5/unet_brain_tumor",
     filename="unet_best.pth",
-    cache_dir="/app/weights",            # will be baked into the image
+    cache_dir="/app/weights",            
     force_download=True
 )
 PY
