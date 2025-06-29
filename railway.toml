@@ -1,0 +1,3 @@
+
+[build]
+rootDir = "backend"     # absolute or repo-relative path
