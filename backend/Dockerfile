@@ -1,19 +1,22 @@
-# 1. Start from a tiny Python image
 FROM python:3.11-slim
-
-# 2. Keep logs unbuffered and pick a working folder
-ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
-# 3. Install Python dependencies first 
+# ── install deps first
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 4. Copy the rest of your source code
-COPY . .
+# ── fetch the checkpoint exactly once, while building
+RUN pip install --no-cache-dir huggingface_hub && \
+    python - <<'PY'
+from huggingface_hub import hf_hub_download
+hf_hub_download(
+    repo_id="TejasB5/unet_brain_tumor",
+    filename="unet_best.pth",
+    cache_dir="/app/weights",            # will be baked into the image
+    force_download=True
+)
+PY
 
-# 5. Expose the port FastAPI will listen on
+COPY src/ ./src
 EXPOSE 8000
-
-# 6. Launch the API
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
