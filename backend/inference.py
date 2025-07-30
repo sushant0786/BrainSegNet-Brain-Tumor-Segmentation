@@ -14,6 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 from pathlib import Path
 
 
+
 #  loading model
 
 DEVICE=torch.device("cuda" if torch.cuda.is_available() else "cpu")
