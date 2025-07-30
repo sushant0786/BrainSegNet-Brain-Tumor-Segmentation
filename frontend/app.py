@@ -14,6 +14,7 @@ def b64_to_np(b64: str) -> np.ndarray:
     data = base64.b64decode(b64)
     bgr  = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
     return cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+    
 
 def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
     h = hex_color.lstrip('#')
