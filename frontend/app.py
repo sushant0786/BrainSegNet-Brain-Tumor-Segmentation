@@ -30,6 +30,7 @@ def overlay_mask(img_rgb: np.ndarray,mask_rgb: np.ndarray,colour: Tuple[int, int
     out[gray > 0] = colour
     tumour = bool(np.any(gray > 0))
     return out, tumour
+    
 
 
 st.set_page_config(
