@@ -23,6 +23,7 @@ def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
     b = int(h[4:6], 16)
     return (r, g, b)
 
+
 def overlay_mask(img_rgb: np.ndarray,mask_rgb: np.ndarray,colour: Tuple[int, int, int]) -> Tuple[np.ndarray, bool]:
     """Colour tumour pixels & return overlay + tumour flag"""
     gray = cv2.cvtColor(mask_rgb, cv2.COLOR_RGB2GRAY)
@@ -36,6 +37,7 @@ def overlay_mask(img_rgb: np.ndarray,mask_rgb: np.ndarray,colour: Tuple[int, int
 st.set_page_config(
     page_title="🧠 Brain-Tumour Segmentation",
     page_icon="🧠",
+    
     layout="wide",
 )
 
