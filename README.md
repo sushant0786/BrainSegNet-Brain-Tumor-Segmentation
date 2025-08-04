@@ -1,4 +1,4 @@
-﻿# Sushant Bodade #Tejas Billava
+﻿# Sushant Bodade Tejas Billava
 
 # Brain-Tumour MRI Segmentation – UNet
 
@@ -63,4 +63,5 @@ The core notebook shows the entire pipeline:
 <img src="./assests/batch_prediction_infernce.png" width="600" alt="Results">
 
 <img src="./assests/inference_results.png" width="600" alt="Results">
+
 
