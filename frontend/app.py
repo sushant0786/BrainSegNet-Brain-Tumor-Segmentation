@@ -32,8 +32,6 @@ def overlay_mask(img_rgb: np.ndarray,mask_rgb: np.ndarray,colour: Tuple[int, int
     tumour = bool(np.any(gray > 0))
     return out, tumour
     
-
-
 st.set_page_config(
     page_title="🧠 Brain-Tumour Segmentation",
     page_icon="🧠",
