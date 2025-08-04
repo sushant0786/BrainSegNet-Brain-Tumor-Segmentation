@@ -4,6 +4,7 @@ from albumentations.pytorch import ToTensorV2
 
 IMG_SIZE=256 
 
+
 train_tf = A.Compose([
         A.Resize(IMG_SIZE, IMG_SIZE),
         A.HorizontalFlip(p=0.5),
@@ -12,6 +13,7 @@ train_tf = A.Compose([
         A.Transpose(p=0.5),
         A.Normalize(), ToTensorV2(),
     ])
+
 val_tf = A.Compose([
         A.Resize(IMG_SIZE, IMG_SIZE),
         A.Normalize(), ToTensorV2(),
