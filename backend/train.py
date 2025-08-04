@@ -6,7 +6,6 @@ from MRIDataset import MRIDataset
 from loss_fun_helper import dice_coef, criterion
 from make_split import train_dl,val_dl,train_ds,val_ds
 
-
 IMG_SIZE      = 256
 BATCH_SIZE    = 32
 LR            = 1e-4
