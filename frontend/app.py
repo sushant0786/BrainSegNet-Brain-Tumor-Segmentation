@@ -5,6 +5,7 @@ import requests, base64, cv2, numpy as np
 from typing import List, Dict, Tuple
 import os
 
+
 API_URL = os.getenv("BACKEND_URL", st.secrets["backend_url"])
 
 
