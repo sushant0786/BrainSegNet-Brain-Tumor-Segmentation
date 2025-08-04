@@ -6,7 +6,6 @@ from MRIDataset import MRIDataset
 from loss_fun_helper import dice_coef, criterion
 from make_split import test_dl
 
-
 DEVICE= torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 print(f"Using device: {DEVICE}")
