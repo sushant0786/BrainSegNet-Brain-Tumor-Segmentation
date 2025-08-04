@@ -11,6 +11,7 @@ from inference import segment_one,encode_png,segment_batch
 
 
 
+
 app=FastAPI(
   title="Brain Tumor Unet API",
   version="1.0.0",
