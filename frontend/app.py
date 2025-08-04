@@ -9,9 +9,6 @@ import os
 API_URL = os.getenv("BACKEND_URL", st.secrets["backend_url"])
 
 
-
-
-
 def b64_to_np(b64: str) -> np.ndarray:
     """base-64 PNG/JPG → RGB numpy array"""
     data = base64.b64decode(b64)
