@@ -19,6 +19,7 @@ class MRIDataset(Dataset):
             out   = self.tfm(image=img, mask=msk)
             img, msk = out['image'], out['mask']
 
+        
         msk = msk.float().unsqueeze(0) / 255.  ## make pixels value from 0 -1 
         return img, msk
     
