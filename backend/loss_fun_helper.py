@@ -1,9 +1,6 @@
 import torch
 from torch import nn
 
-
-
-
 POS_WEIGHT    = 2.0           
 DEVICE        = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
