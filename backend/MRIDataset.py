@@ -2,6 +2,7 @@
 from torch.utils.data.dataset import Dataset
 import cv2
 
+
 class MRIDataset(Dataset):
     def __init__(self, dataframe, transforms=None):
         self.df  = dataframe.reset_index(drop=True)
