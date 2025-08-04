@@ -11,7 +11,6 @@ class UNet(nn.Module):
     self.down_convolution_4 = DownSample(256, 512)
 
     self.bottleneck=DoubleConv(512,1024)
-
     self.up_convolution_1 = UpSample(1024, 512)
     self.up_convolution_2 = UpSample(512, 256)
     self.up_convolution_3 = UpSample(256, 128)
