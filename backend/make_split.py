@@ -8,6 +8,7 @@ import glob
 import cv2
 import numpy as np
 
+
 DATA_PATH = "../../../data/archive/lgg-mri-segmentation/kaggle_3m/"
 data=[]
 data=[]
